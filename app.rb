@@ -36,9 +36,9 @@ class App < Helmet::API
 
     # Parse the Accept header to render properly
     # The API is not so clear how the content_type is determined, 
-    # but making some tests with I could find the following logic:
+    # but making some tests with curl I could find the following logic:
     # NOTE: I prefer to work with format directly (@see https://twitter.com/josevalim/status/7928782685995009)
-    if format =~ /^html?$/i
+    if format =~ /^html?$/i # only explicit calls
       content_type :html
       erb :fortune, {layout: nil}, {fortune_text: fortune_text}
     elsif format =~ /^json$/i || env['HTTP_ACCEPT'] == 'application/json'
