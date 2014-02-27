@@ -6,11 +6,11 @@ class App < Helmet::API
   helpers do
     # Call BSD fortune in async fashion
     #
-    # @param long [Integer] 0 = disallow long, 1 = force long, else = allow both
-    # @param dirty [Integer] 0 = only clean ones, 1 = only dirty ones, else = only clean ones
+    # @param long [String] '0' = disallow long, '1' = force long, else = allow both
+    # @param dirty [String] '0' = only clean ones, '1' = only dirty ones, else = only clean ones
     #
     # @return [String] fortune text
-    def async_fortune(long = nil, dirty = nil, &cb)
+    def async_fortune(long = nil, dirty = nil)
       # build fortune cmd based on API request
       fortune_cmd = 'fortune '
       fortune_cmd << case long
