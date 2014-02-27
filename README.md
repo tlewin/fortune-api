@@ -1,3 +1,4 @@
+
 # Fortune API
 
 Simple web wrapper for fortune BSD program.
@@ -7,6 +8,15 @@ Simple web wrapper for fortune BSD program.
 For this application, it was used the [Helmet Framework](https://github.com/tlewin/helmet). A small web framework, developed by myself, that runs on top of Goliath web server and provide a Sinatra like API.
 
 The async approach for this kind of application has the benefit of still serving other requests, while the fortune process is running in background. In other words, the application can handle more than one request at time.
+
+Using the `ab -c 10 -n 1000 http://localhost:9000/fortune` command to compare the async vs sync approach, we have the following numbers:
+
+    async: 359.33 requests/sec (mean)
+     sync: 257.78 requests/sec (mean)
+
+_* iMac 2.9GHz Intel Core i5/ Ruby 2.0.0_
+
+Almost 40% of performance gain!
 
 ## API documentation
 
