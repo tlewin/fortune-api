@@ -1,0 +1,110 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Fortune</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">    
+    <style type="text/css">
+      *, html {
+        font-family: Arial, Helvetica, sans-serif;
+        background-color: #3e85c9;
+      }
+
+      .content {
+        display: block;
+        width: 600px;
+        margin: 50px auto 0;
+        text-align: center;
+      }
+
+      .balloon {
+        position: relative;
+        display: inline-block;
+        padding: 30px 40px;
+        line-height: 1.5em;
+        text-align: left;
+        background-color: #ffffff;
+        box-shadow: 0px 0px 6px #333333;
+        border-radius: 10px;
+
+        -webkit-transition: all 3s ease;
+        -moz-transition: all 3s ease;
+        -o-transition: all 3s ease;
+        transition: all 3s ease;        
+      }
+
+      .balloon:after 
+      {
+        content: "";
+        position: absolute;
+        box-shadow: rgba(0, 0, 0, 0.3) 2px 2px 2px ;
+        -moz-transform: rotate(45deg);
+        -webkit-transform: rotate(45deg);
+        bottom: -10px;
+        left: 50px;
+        border-width: 10px;
+        border-style: solid;
+        border-color: transparent #FFF #FFF transparent;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="content">
+      <p id="balloon" class="balloon">
+      </p>
+    </div>
+    <script type="text/javascript">
+      var 
+        balloon = document.getElementById('balloon');
+      
+      function getJSON(url, successHandler, errorHandler) {
+        var xhr = typeof XMLHttpRequest != 'undefined'
+          ? new XMLHttpRequest()
+          : new ActiveXObject('Microsoft.XMLHTTP');
+        xhr.open('get', url, true);
+        xhr.onreadystatechange = function() {
+          var status;
+          var data;
+          // http://xhr.spec.whatwg.org/#dom-xmlhttprequest-readystate
+          if (xhr.readyState == 4) { // `DONE`
+            status = xhr.status;
+            if (status == 200) {
+              data = JSON.parse(xhr.responseText);
+              successHandler && successHandler(data);
+            } else {
+              errorHandler && errorHandler(status);
+            }
+          }
+        };
+        xhr.send();
+      }
+
+      function updateBalloon(fortune) {
+        balloon.innerHTML = fortune.replace(/\n/g, '<br>').replace(/\s/g, '&nbsp;');
+      }
+
+      function updateBalloonAndScheduleNext(fortune) {
+        // Estimate time to transaction. 200 wpm
+        var
+          timeToChange = fortune.split(/\s+/).length * 300;
+
+        if(timeToChange < 1000) {timeToChange = 1000} // Less than one second
+
+        updateBalloon(fortune);
+
+        setTimeout(function() { 
+          getJSON('/fortune.json' + window.location.search, 
+            function(data) {
+              updateBalloonAndScheduleNext(data.text);
+            },
+            function() {
+              updateBalloon("it is embarrassing...\nThe update fails!\n  -- Thiago Lewin");
+            })
+          }, timeToChange);
+      }
+
+      updateBalloonAndScheduleNext(<%= fortune_text.dump %>);
+    </script>
+  </body>
+</html>
